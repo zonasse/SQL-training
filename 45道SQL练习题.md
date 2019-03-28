@@ -1,0 +1,377 @@
+# 45道SQL练习题
+
+## SQL:
+
+```mysql
+#创建学生表
+CREATE TABLE IF NOT EXISTS STUDENT
+(
+	SNO VARCHAR(3) NOT NULL, 
+	SNAME VARCHAR(4) NOT NULL,
+	SSEX VARCHAR(2) NOT NULL, 
+	SBIRTHDAY DATETIME,
+	CLASS VARCHAR(5)
+);
+#创建课程表
+CREATE TABLE IF NOT EXISTS COURSE
+(
+	CNO VARCHAR(5) NOT NULL, 
+	CNAME VARCHAR(10) NOT NULL, 
+	TNO VARCHAR(10) NOT NULL
+);
+#创建分数表
+CREATE TABLE IF NOT EXISTS SCORE 
+(
+	SNO VARCHAR(3) NOT NULL, 
+	CNO VARCHAR(5) NOT NULL, 
+	DEGREE NUMERIC(10, 1) NOT NULL
+);
+#创建教师表
+CREATE TABLE IF NOT EXISTS TEACHER 
+(
+	TNO VARCHAR(3) NOT NULL, 
+	TNAME VARCHAR(4) NOT NULL, TSEX VARCHAR(2) NOT NULL, 
+	TBIRTHDAY DATETIME NOT NULL, PROF VARCHAR(6), 
+	DEPART VARCHAR(10) NOT NULL
+);
+#插入学生数据
+INSERT INTO STUDENT (SNO,SNAME,SSEX,SBIRTHDAY,CLASS) VALUES (108 ,'曾华' ,'男' ,'1977-09-01','95033');
+INSERT INTO STUDENT (SNO,SNAME,SSEX,SBIRTHDAY,CLASS) VALUES (105 ,'匡明' ,'男' ,'1975-10-02','95031');
+INSERT INTO STUDENT (SNO,SNAME,SSEX,SBIRTHDAY,CLASS) VALUES (107 ,'王丽' ,'女' ,'1976-01-23','95033');
+INSERT INTO STUDENT (SNO,SNAME,SSEX,SBIRTHDAY,CLASS) VALUES (101 ,'李军' ,'男' ,'1976-02-20','95033');
+INSERT INTO STUDENT (SNO,SNAME,SSEX,SBIRTHDAY,CLASS) VALUES (109 ,'王芳' ,'女' ,'1975-02-10','95031');
+INSERT INTO STUDENT (SNO,SNAME,SSEX,SBIRTHDAY,CLASS) VALUES (103 ,'陆君' ,'男' ,'1974-06-03','95031');
+#插入课程数据
+INSERT INTO COURSE(CNO,CNAME,TNO)VALUES ('3-105' ,'计算机导论',825);
+INSERT INTO COURSE(CNO,CNAME,TNO)VALUES ('3-245' ,'操作系统' ,804);
+INSERT INTO COURSE(CNO,CNAME,TNO)VALUES ('6-166' ,'数据电路' ,856);
+INSERT INTO COURSE(CNO,CNAME,TNO)VALUES ('9-888' ,'高等数学' ,100);
+#插入分数数据
+INSERT INTO SCORE(SNO,CNO,DEGREE)VALUES (103,'3-245',86);
+INSERT INTO SCORE(SNO,CNO,DEGREE)VALUES (105,'3-245',75);
+INSERT INTO SCORE(SNO,CNO,DEGREE)VALUES (109,'3-245',68);
+INSERT INTO SCORE(SNO,CNO,DEGREE)VALUES (103,'3-105',92);
+INSERT INTO SCORE(SNO,CNO,DEGREE)VALUES (105,'3-105',88);
+INSERT INTO SCORE(SNO,CNO,DEGREE)VALUES (109,'3-105',76);
+INSERT INTO SCORE(SNO,CNO,DEGREE)VALUES (101,'3-105',64);
+INSERT INTO SCORE(SNO,CNO,DEGREE)VALUES (107,'3-105',91);
+INSERT INTO SCORE(SNO,CNO,DEGREE)VALUES (108,'3-105',78);
+INSERT INTO SCORE(SNO,CNO,DEGREE)VALUES (101,'6-166',85);
+INSERT INTO SCORE(SNO,CNO,DEGREE)VALUES (107,'6-106',79);
+INSERT INTO SCORE(SNO,CNO,DEGREE)VALUES (108,'6-166',81);
+#插入教师数据
+INSERT INTO TEACHER(TNO,TNAME,TSEX,TBIRTHDAY,PROF,DEPART) VALUES (804,'李诚','男','1958-12-02','副教授','计算机系');
+INSERT INTO TEACHER(TNO,TNAME,TSEX,TBIRTHDAY,PROF,DEPART) VALUES (856,'张旭','男','1969-03-12','讲师','电子工程系');
+INSERT INTO TEACHER(TNO,TNAME,TSEX,TBIRTHDAY,PROF,DEPART) VALUES (825,'王萍','女','1972-05-05','助教','计算机系');
+INSERT INTO TEACHER(TNO,TNAME,TSEX,TBIRTHDAY,PROF,DEPART) VALUES (831,'刘冰','女','1977-08-14','助教','电子工程系');
+```
+
+## 1、 查询Student表中的所有记录的Sname、Ssex和Class列。
+
+```mysql
+SELECT SNAME,SSEX,CLASS FROM STUDENT;
+```
+
+##2、 查询教师所有的单位即不重复的Depart列。
+
+```mysql
+SELECT DISTINCT DEPART FROM TEACHER;
+```
+
+##3、 查询Student表的所有记录。
+
+```mysql
+SELECT * FROM STUDENT;
+```
+
+## 4、 查询Score表中成绩在60到80之间的所有记录。
+
+```mysql
+SELECT * FROM SCORE WHERE DEGREE >= 60 AND DEGREE <= 80;
+```
+
+## 5、 查询Score表中成绩为85，86或88的记录。
+
+`````mysql
+SELECT * FROM SCORE WHERE DEGREE = 85 OR DEGREE = 86 OR DEGREE = 88;
+`````
+
+## 6、 查询Student表中“95031”班或性别为“女”的同学记录。
+
+````mysql
+SELECT * FROM STUDENT WHERE CLASS = '95031' OR SSEX = '女';
+````
+
+## 7、 以Class降序查询Student表的所有记录。
+
+````mysql
+SELECT * FROM STUDENT ORDER BY CLASS DESC;
+````
+
+## 8、 以Cno升序、Degree降序查询Score表的所有记录。
+
+```mysql
+SELECT * FROM SCORE ORDER BY CNO ASC, DEGREE DESC;
+```
+
+## 9、 查询“95031”班的学生人数。
+
+```mysql
+SELECT COUNT(*) AS '学生人数' FROM STUDENT WHERE CLASS = '95031';
+```
+
+## 10、查询Score表中的最高分的学生学号和课程号。
+
+```mysql
+SELECT SNO, CNO FROM SCORE WHERE DEGREE = (SELECT MAX(DEGREE) FROM SCORE);
+```
+
+## 11、查询‘3-105’号课程的平均分。
+
+```mysql
+SELECT AVG(DEGREE) AS '平均分' FROM SCORE WHERE CNO = '3-105';
+```
+
+## 12、查询Score表中至少有5名学生选修的并以3开头的课程的平均分数。
+
+```mysql
+SELECT AVG(DEGREE) FROM SCORE WHERE CNO LIKE '3%' GROUP BY CNO HAVING COUNT(*) >= 5;
+```
+
+## 13、查询最低分大于70，最高分小于90的Sno列。
+
+```mysql
+SELECT SNO FROM SCORE GROUP BY SNO HAVING MIN(DEGREE) > 70 AND MAX(DEGREE) < 90;
+```
+
+## 14、查询所有学生的Sname、Cno和Degree列。
+
+```mysql
+SELECT student.SNAME AS SNAME, CNO, DEGREE FROM SCORE AS score
+INNER JOIN STUDENT AS student ON score.SNO = student.SNO;
+```
+
+## 15、查询所有学生的Sno、Cname和Degree列。
+
+```mysql
+SELECT SNO, course.CNAME AS CNAME, DEGREE FROM SCORE AS score
+INNER JOIN COURSE AS course ON score.CNO = course.CNO;
+```
+
+## 16、查询所有学生的Sname、Cname和Degree列。
+
+```mysql
+SELECT student.SNAME, course.CNAME, score.DEGREE FROM SCORE AS score
+INNER JOIN STUDENT AS student ON score.SNO = student.SNO 
+INNER JOIN COURSE AS course ON course.CNO = score.CNO;
+```
+
+## 17、查询“95033”班所选课程的平均分。
+
+```mysql
+SELECT AVG(score.DEGREE) FROM SCORE AS score INNER JOIN STUDENT AS student ON score.SNO = student.SNO WHERE student.CLASS = '95033';
+```
+
+## 18、假设使用如下命令建立了一个grade表：
+
+```mysql
+START TRANSACTION;
+CREATE TABLE IF NOT EXISTS GRADE
+(
+	low   NUMERIC(3,0),
+ 	upp   NUMERIC(3,0),
+	rank  CHAR(1)
+);
+INSERT INTO GRADE VALUES (90,100,'A');
+INSERT INTO GRADE VALUES (80,89,'B');
+INSERT INTO GRADE VALUES (70,79,'C');
+INSERT INTO GRADE VALUES (60,69,'D');
+INSERT INTO GRADE VALUES (0,59,'E');
+COMMIT;
+```
+
+## 现查询所有同学的Sno、Cno和rank列。
+
+```mysql
+SELECT score.SNO, score.CNO, grade.rank FROM SCORE AS score INNER JOIN GRADE AS grade ON score.DEGREE >= grade.low AND score.DEGREE <= grade.upp;
+```
+
+## 19、查询选修“3-105”课程的成绩高于“109”号同学成绩的所有同学的记录。
+
+```mysql
+SELECT student.* FROM STUDENT AS student 
+INNER JOIN SCORE AS score 
+ON student.SNO = score.SNO AND score.CNO = '3-105' 
+AND score.DEGREE > (SELECT DEGREE FROM SCORE WHERE SNO = '109' AND CNO='3-105');
+```
+
+## 20、查询score中选学一门以上课程的同学中分数为非最高分成绩的记录。
+
+```mysql
+SELECT score.* FROM SCORE AS score INNER JOIN 
+(SELECT SNO,MAX(DEGREE) AS MAXD FROM SCORE GROUP BY SNO HAVING COUNT(*) > 1) AS temp 
+ON score.SNO = temp.SNO AND score.DEGREE < temp.MAXD 
+ORDER BY score.SNO;
+```
+
+## 21、查询成绩高于学号为“109”、课程号为“3-105”的成绩的所有记录。
+
+````mysql
+SELECT * FROM SCORE WHERE DEGREE > (SELECT DEGREE FROM SCORE WHERE SNO = '109' AND CNO = '3-105');
+````
+
+## 22、查询和学号为108的同学同年出生的所有学生的Sno、Sname和Sbirthday列。
+
+```mysql
+SELECT SNO, SNAME, SBIRTHDAY FROM STUDENT 
+WHERE SNO <> '108' AND
+YEAR(SBIRTHDAY) = (SELECT YEAR(SBIRTHDAY) FROM STUDENT WHERE SNO = '108');
+```
+
+## 23、查询“张旭“教师任课的学生成绩。
+
+```mysql
+SELECT SNO, DEGREE FROM SCORE AS score 
+INNER JOIN COURSE AS course ON score.CNO = course.CNO 
+INNER JOIN TEACHER AS teacher ON teacher.TNO = course.TNO AND teacher.TNAME = '张旭';
+```
+
+## 24、查询选修某课程的同学人数多于5人的教师姓名。
+
+```mysql
+SELECT TNAME FROM TEACHER WHERE TNO IN 
+(SELECT course.TNO FROM COURSE AS course , SCORE AS score WHERE course.CNO = score.CNO GROUP BY course.TNO HAVING COUNT(course.TNO) > 5);
+```
+
+## 25、查询95033班和95031班全体学生的记录。
+
+```mysql
+SELECT * FROM STUDENT WHERE CLASS IN ('95033','95031');
+```
+
+## 26、查询存在有85分以上成绩的课程Cno.
+
+```mysql
+SELECT DISTINCT CNO FROM SCORE WHERE DEGREE >= 85;
+```
+
+## 27、查询出“计算机系“教师所教课程的成绩表。
+
+```mysql
+SELECT score.* FROM 
+(SCORE AS score INNER JOIN COURSE AS course ON score.CNO = course.CNO) 
+INNER JOIN TEACHER AS teacher 
+ON course.TNO = teacher.TNO AND teacher.DEPART = '计算机系'; 
+```
+
+## 28、查询“计算机系”与“电子工程系“不同职称的教师的Tname和Prof。
+
+ ```mysql
+SELECT TNAME, PROF FROM TEACHER WHERE DEPART = '计算机系' AND PROF NOT IN (SELECT PROF FROM TEACHER WHERE DEPART = '电子工程系');
+ ```
+
+## 29、查询选修编号为“3-105“课程且成绩至少高于选修编号为“3-245”的同学的Cno、Sno和Degree,并按Degree从高到低次序排序。
+
+```mysql
+SELECT CNO, SNO, DEGREE FROM SCORE WHERE CNO = '3-105' AND DEGREE > (SELECT MIN(DEGREE) FROM SCORE WHERE CNO = '3-245') ORDER BY DEGREE DESC;
+```
+
+## 30、查询选修编号为“3-105”且成绩高于选修编号为“3-245”课程的同学的Cno、Sno和Degree.
+
+```
+SELECT CNO, SNO, DEGREE FROM SCORE WHERE CNO = '3-105' AND DEGREE > (SELECT MAX(DEGREE) FROM SCORE WHERE CNO = '3-245') ORDER BY DEGREE DESC;
+```
+
+## 31、查询所有教师和同学的name、sex和birthday.
+
+```mysql
+SELECT TNAME AS NAME,TSEX AS SEX,TBIRTHDAY AS BIRTHDAY FROM TEACHER UNION SELECT SNAME, SSEX, SBIRTHDAY FROM STUDENT;
+```
+
+## 32、查询所有“女”教师和“女”同学的name、sex和birthday.
+
+```mysql
+SELECT SNAME AS NAME, SSEX AS SEX, SBIRTHDAY AS BIRTHDAY FROM STUDENT WHERE SSEX = '女' UNION SELECT TNAME,TSEX, TBIRTHDAY FROM TEACHER WHERE TSEX = '女';
+```
+
+## 33、查询成绩比该课程平均成绩低的同学的成绩表。
+
+```mysql
+SELECT * FROM SCORE AS S1 WHERE S1.DEGREE > (SELECT AVG(DEGREE) FROM SCORE WHERE CNO = S1.CNO);
+```
+
+## 34、查询所有任课教师的Tname和Depart.
+
+```mysql
+SELECT TNAME, DEPART FROM TEACHER;
+```
+
+## 35  查询所有未讲课的教师的Tname和Depart. 
+
+```mysql
+SELECT TNAME, DEPART FROM TEACHER WHERE TNO NOT IN (SELECT TNO FROM COURSE);
+```
+
+## 36、查询至少有2名男生的班号。
+
+```mysql
+SELECT CLASS, COUNT(*) AS cnt FROM STUDENT WHERE SSEX = '男' GROUP BY CLASS HAVING cnt >= 2;
+```
+
+## 37、查询Student表中不姓“王”的同学记录。
+
+```mysql
+SELECT * FROM STUDENT WHERE SNAME NOT LIKE '王%';
+```
+
+## 38、查询Student表中每个学生的姓名和年龄。
+
+```mysql
+SELECT SNAME, TIMESTAMPDIFF(year,SBIRTHDAY,NOW()) AS AGE FROM STUDENT;
+```
+
+## 39、查询Student表中最大和最小的Sbirthday日期值。
+
+```mysql
+SELECT MAX(SBIRTHDAY) AS max_birth, MIN(SBIRTHDAY) AS min_birth FROM STUDENT;
+```
+
+## 40、以班号和年龄从大到小的顺序查询Student表中的全部记录。
+
+```mysql
+SELECT * FROM STUDENT ORDER BY CLASS DESC, SBIRTHDAY DESC;
+```
+
+## 41、查询“男”教师及其所上的课程。
+
+```mysql
+SELECT teacher.*, course.* FROM TEACHER AS teacher  
+INNER JOIN COURSE AS course ON teacher.TNO = course.TNO AND teacher.TSEX = '男';
+```
+
+## 42、查询最高分同学的Sno、Cno和Degree列。
+
+```mysql
+SELECT SNO,CNO,DEGREE FROM SCORE WHERE DEGREE = (SELECT MAX(DEGREE) FROM SCORE);
+```
+
+## 43、查询和“李军”同性别的所有同学的Sname.
+
+```mysql
+SELECT SNAME FROM STUDENT WHERE SSEX = (SELECT SSEX FROM STUDENT WHERE SNAME = '李军') AND SNAME <> '李军';
+```
+
+## 44、查询和“李军”同性别并同班的同学Sname.
+
+```mysql
+SELECT SNAME FROM STUDENT WHERE (SSEX,CLASS) IN (SELECT SSEX,CLASS FROM STUDENT WHERE SNAME = '李军') AND SNAME <> '李军' ;
+```
+
+## 45、查询所有选修“计算机导论”课程的“男”同学的成绩表
+
+```mysql
+SELECT score.* FROM 
+(SCORE AS score INNER JOIN COURSE AS course ON score.CNO = course.CNO AND course.CNAME = '计算机导论') INNER JOIN STUDENT 
+AS student ON student.SNO = score.SNO AND student.SSEX = '男';
+```
+
